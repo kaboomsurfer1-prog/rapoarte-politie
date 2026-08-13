@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const STAFF_ROLES = [
   { id: "1518556796808200373", name: "Primar" },
-  { id: "1518557114732118026", name: "Assistent Primar" },
+  { id: "1518557114732118026", name: "Asistent Primar" },
   { id: "1518557504529764463", name: "Manager Politie" },
   { id: "1518557642065317950", name: "Director General" },
   { id: "1518557713582264450", name: "Sef Politie" },
@@ -12,6 +12,7 @@ const STAFF_ROLES = [
   { id: "1518558123198124074", name: "Chestor Principal" },
   { id: "1518558209239945326", name: "Chestor" },
   { id: "1518558329431916708", name: "Comisar Sef" },
+  { id: "1518558411745263657", name: "Comisar" },
   { id: "1518558445283053668", name: "Subcomisar" },
   { id: "1518558470146621453", name: "Inspector Principal" },
   { id: "1518558490593984512", name: "Inspector" },
@@ -19,7 +20,7 @@ const STAFF_ROLES = [
 ];
 
 const NORMAL_ROLES = [
-  { id: "1518558545635971082", name: "Agent Sef Politie" },
+  { id: "1518558545635971082", name: "Agent Sef Principal" },
   { id: "1518558571422285854", name: "Agent Sef Adjunct" },
   { id: "1518558596336582767", name: "Agent Principal" },
   { id: "1518558614976204810", name: "Agent" },

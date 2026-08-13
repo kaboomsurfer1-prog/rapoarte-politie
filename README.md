@@ -95,3 +95,8 @@ Poza cu buletin: atasament
 ```
 
 La `Poza cu buletin:` poti pune un link direct catre poza sau poti atasa imaginea la mesaj.
+
+La `CNP Agent:` accepta orice numar de cifre, de la una in sus.
+
+La `Functie detinuta:` scrie gradul exact pe care il ai pe server. Diacriticele nu conteaza,
+deci `Sef Politie` si `Șef Poliție` sunt amandoua acceptate.

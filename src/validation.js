@@ -171,8 +171,8 @@ function validateReport(content, attachmentsCollection, member) {
     errors.push('Campul "Nume" trebuie completat.');
   }
 
-  if (!/^\d{13}$/.test(values.cnp || "")) {
-    errors.push('Campul "CNP Agent" trebuie sa contina exact 13 cifre.');
+  if (!/^\d+$/.test(values.cnp || "")) {
+    errors.push('Campul "CNP Agent" trebuie sa contina doar cifre.');
   }
 
   const role = getRoleByFunctionName(values.functie);
@@ -233,9 +233,9 @@ function validateSingleField(field, value) {
     case "agent_name":
       return text.length >= 2 ? { value: text } : { error: 'Campul "Nume" trebuie completat.' };
     case "cnp":
-      return /^\d{13}$/.test(text)
+      return /^\d+$/.test(text)
         ? { value: text }
-        : { error: 'Campul "CNP Agent" trebuie sa contina exact 13 cifre.' };
+        : { error: 'Campul "CNP Agent" trebuie sa contina doar cifre.' };
     case "functie": {
       const role = getRoleByFunctionName(text);
       return role
