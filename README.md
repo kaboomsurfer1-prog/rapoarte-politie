@@ -69,6 +69,20 @@ npm start
 - `/baza user:<user> pagina:<numar>` - arata rapoartele salvate in baza de date.
 - `/editare modifica raport_id:<id> camp:<camp> valoare:<text>` - modifica un raport in baza de date.
 - `/editare sterge raport_id:<id> motiv:<text>` - marcheaza raportul ca sters si incearca sa stearga mesajul din Discord.
+- `/reset confirmare:STERGE TOT` - sterge definitiv toate rapoartele si reia numerotarea de la `#1`.
+
+`/baza` si `/editare` cer un grad de staff. `/reset` cere un grad din conducere:
+Primar, Asistent Primar, Manager Politie, Director General sau Sef Politie.
+
+## Reset
+
+`/reset` nu este o stergere logica precum `/editare sterge`: goleste tabelele `reports`
+si `report_audit` si reseteaza `sqlite_sequence`, deci urmatorul raport primeste `#1`.
+Mesajele din Discord raman pe loc.
+
+Inainte sa stearga ceva, botul scrie un backup in `data/backups/` prin `db.backup()`.
+Daca backupul esueaza, resetul se opreste si nu se sterge nimic. Backupurile stau pe
+acelasi volum ca baza de date, deci supravietuiesc redeploy-urilor.
 
 `/editare` si `/baza` sunt disponibile doar pentru rolurile staff configurate.
 

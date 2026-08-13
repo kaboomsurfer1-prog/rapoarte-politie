@@ -325,6 +325,35 @@ function createDatabase(databasePath) {
       ).run(reportId, guildId, moderatorId, action, JSON.stringify(payload), new Date().toISOString());
     },
 
+    async backupTo(directory) {
+      fs.mkdirSync(directory, { recursive: true });
+      const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const target = path.join(directory, `rapoarte-${stamp}.sqlite`);
+      // db.backup() and not a file copy: journal_mode is WAL, so the .sqlite file
+      // alone can be missing the most recent writes.
+      await db.backup(target);
+      return target;
+    },
+
+    resetReports(guildId) {
+      const removed = db
+        .prepare("SELECT COUNT(*) AS count FROM reports WHERE guild_id = ?")
+        .get(guildId).count;
+
+      db.transaction(() => {
+        // report_audit references reports(id) and foreign_keys is ON, so it goes first.
+        db.prepare("DELETE FROM report_audit WHERE guild_id = ?").run(guildId);
+        db.prepare("DELETE FROM reports WHERE guild_id = ?").run(guildId);
+
+        const remaining = db.prepare("SELECT COUNT(*) AS count FROM reports").get().count;
+        if (!remaining) {
+          db.prepare("DELETE FROM sqlite_sequence WHERE name IN ('reports', 'report_audit')").run();
+        }
+      })();
+
+      return removed;
+    },
+
     close() {
       db.close();
     }

@@ -27,10 +27,21 @@ const NORMAL_ROLES = [
   { id: "1518558638644531241", name: "Cadet Politie" }
 ];
 
+const LEADERSHIP_ROLE_NAMES = [
+  "Primar",
+  "Asistent Primar",
+  "Manager Politie",
+  "Director General",
+  "Sef Politie"
+];
+
 function parseBoolean(value, fallback = false) {
   if (value === undefined || value === null || value === "") return fallback;
   return ["1", "true", "yes", "y", "da"].includes(String(value).toLowerCase());
 }
+
+const databasePath = path.resolve(process.env.DATABASE_PATH || "./data/politie_reports.sqlite");
+const leadershipRoles = STAFF_ROLES.filter((role) => LEADERSHIP_ROLE_NAMES.includes(role.name));
 
 const config = {
   token: process.env.DISCORD_TOKEN,
@@ -39,11 +50,16 @@ const config = {
   reportChannelId: process.env.REPORT_CHANNEL_ID || "1518553389095588062",
   notificationChannelId:
     process.env.NOTIFICATION_CHANNEL_ID || process.env.REPORT_CHANNEL_ID || "1518553389095588062",
-  databasePath: path.resolve(process.env.DATABASE_PATH || "./data/politie_reports.sqlite"),
+  databasePath,
+  backupPath: process.env.BACKUP_PATH
+    ? path.resolve(process.env.BACKUP_PATH)
+    : path.join(path.dirname(databasePath), "backups"),
   mentionStaffOnReport: parseBoolean(process.env.MENTION_STAFF_ON_REPORT, false),
   deleteInvalidReports: parseBoolean(process.env.DELETE_INVALID_REPORTS, false),
   staffRoles: STAFF_ROLES,
   normalRoles: NORMAL_ROLES,
+  leadershipRoles,
+  leadershipRoleIds: leadershipRoles.map((role) => role.id),
   staffRoleIds: STAFF_ROLES.map((role) => role.id),
   policeRoleIds: [...STAFF_ROLES, ...NORMAL_ROLES].map((role) => role.id),
   allRoles: [...STAFF_ROLES, ...NORMAL_ROLES]

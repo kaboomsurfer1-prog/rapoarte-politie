@@ -99,6 +99,16 @@ function buildCommands() {
           .addStringOption((option) =>
             option.setName("motiv").setDescription("Motivul stergerii.").setRequired(false)
           )
+      ),
+
+    new SlashCommandBuilder()
+      .setName("reset")
+      .setDescription("Sterge toate rapoartele si reia numerotarea de la #1. Doar conducerea.")
+      .addStringOption((option) =>
+        option
+          .setName("confirmare")
+          .setDescription('Scrie exact "STERGE TOT" ca sa confirmi.')
+          .setRequired(true)
       )
   ].map((command) => command.toJSON());
 }

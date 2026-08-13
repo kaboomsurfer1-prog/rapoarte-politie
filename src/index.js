@@ -8,6 +8,8 @@ const {
 
 require("./railway-health");
 
+const path = require("node:path");
+
 const config = require("./config");
 const createDatabase = require("./database");
 const { formatDateTime, formatMoney, mentionUser, roleMentions, truncate } = require("./format");
@@ -40,6 +42,10 @@ function createErrorEmbed(title) {
 
 function isStaff(member) {
   return hasAnyRole(member, config.staffRoleIds);
+}
+
+function isLeadership(member) {
+  return hasAnyRole(member, config.leadershipRoleIds);
 }
 
 function buildReportEmbed(report, title = "Raport politie") {
@@ -345,6 +351,51 @@ async function handleEditare(interaction) {
   await sendNotification(interaction.guild, embed);
 }
 
+const RESET_CONFIRMATION = "STERGE TOT";
+
+async function handleReset(interaction) {
+  if (!isLeadership(interaction.member)) {
+    await interaction.editReply({
+      content: "Nu ai acces la aceasta comanda. Doar conducerea o poate folosi."
+    });
+    return;
+  }
+
+  const confirmation = interaction.options.getString("confirmare", true).trim();
+  if (confirmation !== RESET_CONFIRMATION) {
+    await interaction.editReply({
+      content: `Confirmare gresita. Scrie exact "${RESET_CONFIRMATION}" ca sa stergi toate rapoartele.`
+    });
+    return;
+  }
+
+  // The backup has to land before anything is deleted, otherwise a failing backup
+  // would leave no way back.
+  let backupPath;
+  try {
+    backupPath = await database.backupTo(config.backupPath);
+  } catch (error) {
+    console.error("Backup esuat inainte de reset:", error);
+    await interaction.editReply({
+      content: "Backupul a esuat, asa ca nu am sters nimic. Incearca din nou."
+    });
+    return;
+  }
+
+  const removed = database.resetReports(interaction.guildId);
+
+  const embed = createErrorEmbed("Baza de date resetata")
+    .setDescription(`Toate rapoartele au fost sterse de ${mentionUser(interaction.user.id)}.`)
+    .addFields(
+      { name: "Rapoarte sterse", value: String(removed), inline: true },
+      { name: "Urmatorul raport", value: "#1", inline: true },
+      { name: "Backup", value: path.basename(backupPath), inline: false }
+    );
+
+  await interaction.editReply({ embeds: [embed] });
+  await sendNotification(interaction.guild, embed);
+}
+
 client.once("clientReady", () => {
   console.log(`Bot conectat ca ${client.user.tag}`);
   console.log(`Server: ${config.guildId}`);
@@ -365,7 +416,7 @@ client.on("interactionCreate", async (interaction) => {
     return;
   }
 
-  const privateCommands = new Set(["baza", "editare"]);
+  const privateCommands = new Set(["baza", "editare", "reset"]);
   await interaction.deferReply({ ephemeral: privateCommands.has(interaction.commandName) });
 
   try {
@@ -374,6 +425,7 @@ client.on("interactionCreate", async (interaction) => {
     if (interaction.commandName === "top") await handleTop(interaction);
     if (interaction.commandName === "baza") await handleBaza(interaction);
     if (interaction.commandName === "editare") await handleEditare(interaction);
+    if (interaction.commandName === "reset") await handleReset(interaction);
   } catch (error) {
     console.error("Eroare la comanda slash:", error);
     const content = "A aparut o eroare la executarea comenzii.";
