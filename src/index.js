@@ -6,6 +6,8 @@ const {
   PermissionFlagsBits
 } = require("discord.js");
 
+require("./railway-health");
+
 const config = require("./config");
 const createDatabase = require("./database");
 const { formatDateTime, formatMoney, mentionUser, roleMentions, truncate } = require("./format");

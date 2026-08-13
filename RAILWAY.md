@@ -14,10 +14,11 @@ REPORT_CHANNEL_ID=1518553389095588062
 NOTIFICATION_CHANNEL_ID=1518553389095588062
 MENTION_STAFF_ON_REPORT=false
 DELETE_INVALID_REPORTS=false
-NODE_OPTIONS=--require ./src/railway-health.js
 ```
 
-`NODE_OPTIONS` porneste endpointul `/health` cerut de `railway.toml`.
+Nu seta `NODE_OPTIONS`. Variabila `--require ./src/railway-health.js` se aplica si proceselor
+`node` din timpul build-ului, cand `src/` inca nu exista, si strica build-ul.
+Serverul HTTP optional porneste singur din `src/index.js` doar daca exista `PORT`.
 
 ## Baza de date SQLite persistenta
 
