@@ -345,7 +345,7 @@ async function handleEditare(interaction) {
   await sendNotification(interaction.guild, embed);
 }
 
-client.once("ready", () => {
+client.once("clientReady", () => {
   console.log(`Bot conectat ca ${client.user.tag}`);
   console.log(`Server: ${config.guildId}`);
   console.log(`Canal rapoarte: ${config.reportChannelId}`);
